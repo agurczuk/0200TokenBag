@@ -357,7 +357,7 @@ function App() {
       )}
       {page === pageEnum.EndGame && (
         <Card>
-          <Group>
+          <Group justify="center" pt={50} pb={50}>
             <Button
               h={100}
               size="xl"
@@ -381,8 +381,8 @@ function App() {
             })}
           </Group>
           <Text>Turn {turnNo}</Text>
-          <Card.Section p={100} withBorder m={10}>
-            {getDrawnToken()}
+          <Card.Section p={20} withBorder m={10}>
+            <Group justify="center">{getDrawnToken()}</Group>
           </Card.Section>
           <Group mih={80} gap="xs">
             {drawn.map((val, key) => {
@@ -426,7 +426,14 @@ function App() {
           </Text>
           <Card.Section>
             <Text c="red">Defenders</Text>
-            <Group m="0" mih={100} align="center" w="100%" justify="center">
+            <Group
+              m="0"
+              gap={1}
+              mih={60}
+              align="center"
+              w="100%"
+              justify="center"
+            >
               {defenders.map((v, k) => {
                 return getChev("defenders", v, k);
               })}
@@ -434,7 +441,14 @@ function App() {
           </Card.Section>
           <Card.Section>
             <Text c="blue">Attackers</Text>
-            <Group m="0" mih={100} align="center" w="100%" justify="center">
+            <Group
+              m="0"
+              gap={1}
+              mih={60}
+              align="center"
+              w="100%"
+              justify="center"
+            >
               {attackers.map((v, k) => {
                 return getChev("attacker", v, k);
               })}
@@ -442,7 +456,14 @@ function App() {
           </Card.Section>
           <Card.Section>
             <Text c="teal">Reinforcements</Text>
-            <Group m="0" mih={100} align="center" w="100%" justify="center">
+            <Group
+              m="0"
+              gap={1}
+              mih={60}
+              align="center"
+              w="100%"
+              justify="center"
+            >
               {reinforcements.map((v, k) => {
                 return getChev("reinforcement", v, k);
               })}
@@ -461,33 +482,33 @@ function App() {
               Start
             </Button>
           </Card.Section>
-          <Group align="center" m="sm" justify="center">
-            <Button bg="red" size="lg" onClick={() => addToken("defenders", 1)}>
+          <Group align="center" m={2} justify="center">
+            <Button bg="red" size="md" onClick={() => addToken("defenders", 1)}>
               <IconChevronDown size={40} />
             </Button>
-            <Button bg="red" size="lg" onClick={() => addToken("defenders", 2)}>
+            <Button bg="red" size="md" onClick={() => addToken("defenders", 2)}>
               <IconChevronsDown size={40} />
             </Button>
           </Group>
-          <Group align="center" m="sm" justify="center">
-            <Button bg="blue" size="lg" onClick={() => addToken("attacker", 1)}>
+          <Group align="center" m={2} justify="center">
+            <Button bg="blue" size="md" onClick={() => addToken("attacker", 1)}>
               <IconChevronDown size={40} />
             </Button>
-            <Button bg="blue" size="lg" onClick={() => addToken("attacker", 2)}>
+            <Button bg="blue" size="md" onClick={() => addToken("attacker", 2)}>
               <IconChevronsDown size={40} />
             </Button>
           </Group>
-          <Group align="center" m="sm" justify="center">
+          <Group align="center" m={2} justify="center">
             <Button
               bg="green"
-              size="lg"
+              size="md"
               onClick={() => addToken("reinforcement", 1)}
             >
               <IconChevronDown size={40} />
             </Button>
             <Button
               bg="green"
-              size="lg"
+              size="md"
               onClick={() => addToken("reinforcement", 2)}
             >
               <IconChevronsDown size={40} />
