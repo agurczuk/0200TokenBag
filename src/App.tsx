@@ -126,7 +126,7 @@ function App() {
     switch (type) {
       case "attacker":
         attackers.splice(key, 1);
-        setDefenders([...attackers]);
+        setAttackers([...attackers]);
         break;
       case "defenders":
         defenders.splice(key, 1);
@@ -134,7 +134,7 @@ function App() {
         break;
       case "reinforcement":
         reinforcements.splice(key, 1);
-        setDefenders([...reinforcements]);
+        setReinforcements([...reinforcements]);
         break;
     }
   };
@@ -174,20 +174,46 @@ function App() {
     }
   };
 
+  const addUnit = (type: number) => {
+    setBagPool([...bagPool, type]);
+    setBag([...bag, type]);
+  };
+
+  const pullUnit = (type: number) => {
+    //find first token of type
+    const ix = bag.indexOf(type);
+    if (ix > -1) {
+      setBag((arr) => arr.filter((_, i) => i !== ix));
+      setDrawn((arr) => [...arr, type]);
+    }
+  };
+
+  const pushUnit = (type: number) => {
+    const ix = drawn.indexOf(type);
+    if (ix > -1) {
+      setDrawn((arr) => arr.filter((_, i) => i !== ix));
+      setBag((arr) => [...arr, type]);
+    }
+  };
+
   const kill = (type: number) => {
     switch (type) {
       case 1:
         const ix = bagPool.indexOf(1);
-        bagPool.splice(ix, 1);
-        setBagPool([...bagPool]);
+        if (ix > -1) {
+          bagPool.splice(ix, 1);
+          setBagPool([...bagPool]);
+        }
         break;
       case 2:
         let iix = bagPool.indexOf(2);
         let iiix = bagPool.indexOf(2, iix + 1);
 
-        if (iix > -1 && iiix > -1) {
-          bagPool.splice(iiix, 1);
+        if (iix > -1) {
           bagPool.splice(iix, 1);
+        }
+        if (iiix) {
+          bagPool.splice(iiix, 1);
         }
 
         setBagPool([...bagPool]);
@@ -210,8 +236,21 @@ function App() {
               Back
             </Button>
           </Group>
-          <Group gap="xs" m={10}>
+          <Group gap="xs" mih={40} m={5}>
+            Pool:
             {bagPool.map((val, key) => {
+              return getBlip(val, key);
+            })}
+          </Group>
+          <Group gap="xs" mih={40} m={5}>
+            Bag:
+            {bag.map((val, key) => {
+              return getBlip(val, key);
+            })}
+          </Group>
+          <Group gap="xs" mih={40} m={5}>
+            Drawn:
+            {drawn.map((val, key) => {
               return getBlip(val, key);
             })}
           </Group>
@@ -241,14 +280,77 @@ function App() {
             >
               Kill Character
             </Button>
+            <Group gap="xs" mih={40} m={5}>
+              Reinforcements:
+              {reinforcements.map((val, key) => {
+                return getBlip(val, key);
+              })}
+            </Group>
             <Button
               fullWidth
               h={40}
               size="xl"
               bg="green"
+              mt={0}
               onClick={() => addReinforcements()}
             >
               Add reinforcements
+            </Button>
+            <Button
+              fullWidth
+              h={40}
+              size="xl"
+              bg="yellow"
+              mt={40}
+              onClick={() => addUnit(1)}
+            >
+              Add Trooper
+            </Button>
+            <Button
+              fullWidth
+              h={40}
+              size="xl"
+              bg="yellow"
+              onClick={() => addUnit(2)}
+            >
+              Add Character
+            </Button>
+            <Button
+              fullWidth
+              h={40}
+              size="xl"
+              mt={40}
+              bg="cyan"
+              onClick={() => pullUnit(1)}
+            >
+              Pull Trooper
+            </Button>
+            <Button
+              fullWidth
+              h={40}
+              size="xl"
+              bg="cyan"
+              onClick={() => pullUnit(2)}
+            >
+              Pull Character
+            </Button>
+            <Button
+              fullWidth
+              h={40}
+              size="xl"
+              bg="cyan"
+              onClick={() => pushUnit(1)}
+            >
+              Put Back Trooper
+            </Button>
+            <Button
+              fullWidth
+              h={40}
+              size="xl"
+              bg="cyan"
+              onClick={() => pushUnit(2)}
+            >
+              Put back Character
             </Button>
           </Group>
         </Card>
@@ -273,7 +375,7 @@ function App() {
       )}
       {page === pageEnum.Game && (
         <Card>
-          <Group gap="xs">
+          <Group mih={80} gap="xs">
             {bag.map((val, key) => {
               return getBlip(val, key);
             })}
@@ -282,7 +384,7 @@ function App() {
           <Card.Section p={100} withBorder m={10}>
             {getDrawnToken()}
           </Card.Section>
-          <Group gap="xs">
+          <Group mih={80} gap="xs">
             {drawn.map((val, key) => {
               return getBlip(val, key);
             })}
@@ -318,13 +420,13 @@ function App() {
         </Card>
       )}
       {page === pageEnum.Start && (
-        <Card w="350" shadow="xl" padding="md" withBorder>
+        <Card shadow="xl" padding="md" withBorder>
           <Text fw={700} td="underline">
             Prepare units
           </Text>
           <Card.Section>
             <Text c="red">Defenders</Text>
-            <Group m="0" align="center" w="100%" justify="center">
+            <Group m="0" mih={100} align="center" w="100%" justify="center">
               {defenders.map((v, k) => {
                 return getChev("defenders", v, k);
               })}
@@ -332,7 +434,7 @@ function App() {
           </Card.Section>
           <Card.Section>
             <Text c="blue">Attackers</Text>
-            <Group m="0" align="center" w="100%" justify="center">
+            <Group m="0" mih={100} align="center" w="100%" justify="center">
               {attackers.map((v, k) => {
                 return getChev("attacker", v, k);
               })}
@@ -340,7 +442,7 @@ function App() {
           </Card.Section>
           <Card.Section>
             <Text c="teal">Reinforcements</Text>
-            <Group m="0" align="center" w="100%" justify="center">
+            <Group m="0" mih={100} align="center" w="100%" justify="center">
               {reinforcements.map((v, k) => {
                 return getChev("reinforcement", v, k);
               })}
@@ -360,51 +462,35 @@ function App() {
             </Button>
           </Card.Section>
           <Group align="center" m="sm" justify="center">
-            <Button
-              bg="red"
-              size="compact-sm"
-              onClick={() => addToken("defenders", 1)}
-            >
-              <IconChevronDown size={12} />
+            <Button bg="red" size="lg" onClick={() => addToken("defenders", 1)}>
+              <IconChevronDown size={40} />
             </Button>
-            <Button
-              bg="red"
-              size="compact-sm"
-              onClick={() => addToken("defenders", 2)}
-            >
-              <IconChevronsDown size={12} />
+            <Button bg="red" size="lg" onClick={() => addToken("defenders", 2)}>
+              <IconChevronsDown size={40} />
             </Button>
           </Group>
           <Group align="center" m="sm" justify="center">
-            <Button
-              bg="blue"
-              size="compact-sm"
-              onClick={() => addToken("attacker", 1)}
-            >
-              <IconChevronDown size={12} />
+            <Button bg="blue" size="lg" onClick={() => addToken("attacker", 1)}>
+              <IconChevronDown size={40} />
             </Button>
-            <Button
-              bg="blue"
-              size="compact-sm"
-              onClick={() => addToken("attacker", 2)}
-            >
-              <IconChevronsDown size={12} />
+            <Button bg="blue" size="lg" onClick={() => addToken("attacker", 2)}>
+              <IconChevronsDown size={40} />
             </Button>
           </Group>
           <Group align="center" m="sm" justify="center">
             <Button
               bg="green"
-              size="compact-sm"
+              size="lg"
               onClick={() => addToken("reinforcement", 1)}
             >
-              <IconChevronDown size={12} />
+              <IconChevronDown size={40} />
             </Button>
             <Button
               bg="green"
-              size="compact-sm"
+              size="lg"
               onClick={() => addToken("reinforcement", 2)}
             >
-              <IconChevronsDown size={12} />
+              <IconChevronsDown size={40} />
             </Button>
           </Group>
         </Card>
