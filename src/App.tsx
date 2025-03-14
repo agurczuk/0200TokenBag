@@ -6,7 +6,7 @@ import {
   IconFlagCheck,
   IconQuestionMark,
 } from "@tabler/icons-react";
-import { useEffect, useState, version } from "react";
+import { useEffect, useState } from "react";
 
 export type utype = "defenders" | "attacker" | "reinforcement";
 
@@ -166,11 +166,13 @@ function App() {
   };
 
   const addReinforcements = () => {
-    setBagPool([...reinforcements, ...bagPool]);
-    setBag([...bag, ...reinforcements]);
-    setPage(pageEnum.Game);
-    setReinfAdded(true);
-  }
+    if (!reinfAdded) {
+      setBagPool([...reinforcements, ...bagPool]);
+      setBag([...bag, ...reinforcements]);
+      setPage(pageEnum.Game);
+      setReinfAdded(true);
+    }
+  };
 
   const kill = (type: number) => {
     switch (type) {
