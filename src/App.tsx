@@ -8,18 +8,14 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import StartPage from "./pages/StartPage";
+import OptionsPage from "./pages/OptionsPage";
+import { pageEnum } from "./Enums";
+import { getBlip } from "./Shared";
 
 export type utype = "defenders" | "attacker" | "reinforcement";
 
-enum pageEnum {
-  Start,
-  Game,
-  Options,
-  EndGame,
-}
-
 interface GameState {
-  attackers: number[]; // Replace `any` with a specific type if possible
+  attackers: number[];
   defenders: number[];
   reinforcements: number[];
   bag: number[];
@@ -38,9 +34,7 @@ const random = (l: number) => {
 };
 
 //on load
-//console.log("load state");
 const savedState = localStorage.getItem("startstate");
-//console.log(savedState);
 const startState: GameState | undefined = savedState
   ? JSON.parse(savedState)
   : undefined;
@@ -80,7 +74,6 @@ function App() {
 
   //localstorage
   useEffect(() => {
-    console.log("save state");
     const saveblob: GameState = {
       attackers: attackers,
       defenders: defenders,
@@ -170,17 +163,6 @@ function App() {
     }
   }, [timeTokens]);
 
-  const getBlip = (v: number, k: number) => {
-    switch (v) {
-      case 1:
-        return <IconChevronDown key={k} size={15} />;
-      case 2:
-        return <IconChevronsDown key={k} size={15} />;
-      case 3:
-        return <IconClock key={k} size={15} />;
-    }
-  };
-
   const addToken = (type: string, val: number) => {
     switch (type) {
       case "attacker":
@@ -258,7 +240,7 @@ function App() {
         if (iix > -1) {
           bagPool.splice(iix, 1);
         }
-        
+
         let iiix = bagPool.indexOf(2, iix);
         if (iiix > -1) {
           bagPool.splice(iiix, 1);
@@ -273,135 +255,22 @@ function App() {
   return (
     <>
       {page === pageEnum.Options && (
-        <Card>
-          <Group>
-            <Button
-              fullWidth
-              h={40}
-              size="lg"
-              onClick={() => setPage(pageEnum.Game)}
-            >
-              Back
-            </Button>
-          </Group>
-          <Group gap="xs" mih={40} m={5}>
-            Pool:
-            {bagPool.map((val, key) => {
-              return getBlip(val, key);
-            })}
-          </Group>
-          <Group gap="xs" mih={40} m={5}>
-            Bag:
-            {bag.map((val, key) => {
-              return getBlip(val, key);
-            })}
-          </Group>
-          <Group gap="xs" mih={40} m={5}>
-            Drawn:
-            {drawn.map((val, key) => {
-              return getBlip(val, key);
-            })}
-          </Group>
-          <Group>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              bg="red"
-              onClick={() => kill(1)}
-              rightSection={<IconChevronDown />}
-            >
-              Kill Trooper
-            </Button>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              bg="red"
-              onClick={() => kill(2)}
-              rightSection={
-                <>
-                  <IconChevronsDown />
-                  <IconChevronsDown />
-                </>
-              }
-            >
-              Kill Character
-            </Button>
-            <Group gap="xs" mih={40} m={5}>
-              Reinforcements:
-              {reinforcements.map((val, key) => {
-                return getBlip(val, key);
-              })}
-            </Group>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              bg="green"
-              mt={0}
-              onClick={() => addReinforcements()}
-            >
-              Add reinforcements
-            </Button>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              bg="yellow"
-              mt={40}
-              onClick={() => addUnit(1)}
-            >
-              Add Trooper
-            </Button>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              bg="yellow"
-              onClick={() => addUnit(2)}
-            >
-              Add Character
-            </Button>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              mt={40}
-              bg="cyan"
-              onClick={() => pullUnit(1)}
-            >
-              Pull Trooper
-            </Button>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              bg="cyan"
-              onClick={() => pullUnit(2)}
-            >
-              Pull Character
-            </Button>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              bg="cyan"
-              onClick={() => pushUnit(1)}
-            >
-              Put Back Trooper
-            </Button>
-            <Button
-              fullWidth
-              h={40}
-              size="xl"
-              bg="cyan"
-              onClick={() => pushUnit(2)}
-            >
-              Put back Character
-            </Button>
-          </Group>
-        </Card>
+        <OptionsPage
+          bags={{
+            bag: bag,
+            bagPool: bagPool,
+            drawn: drawn,
+            reinforcements: reinforcements,
+          }}
+          actions={{
+            addReinforcements: addReinforcements,
+            addUnit: addUnit,
+            kill: kill,
+            pullUnit: pullUnit,
+            pushUnit: pushUnit,
+            setPage: setPage,
+          }}
+        />
       )}
       {page === pageEnum.EndGame && (
         <Card>
