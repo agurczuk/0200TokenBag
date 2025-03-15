@@ -7,6 +7,7 @@ import {
   IconQuestionMark,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import StartPage from "./pages/StartPage";
 
 export type utype = "defenders" | "attacker" | "reinforcement";
 
@@ -108,7 +109,7 @@ function App() {
     }
   };
 
-  const addToken = (type: utype, val: number) => {
+  const addToken = (type: string, val: number) => {
     switch (type) {
       case "attacker":
         setAttackers([...attackers, val]);
@@ -122,7 +123,7 @@ function App() {
     }
   };
 
-  const removeToken = (type: utype, key: number) => {
+  const removeToken = (type: string, key: number) => {
     switch (type) {
       case "attacker":
         attackers.splice(key, 1);
@@ -137,32 +138,6 @@ function App() {
         setReinforcements([...reinforcements]);
         break;
     }
-  };
-
-  const getIcon = (val: number) => {
-    switch (val) {
-      case 1:
-        return <IconChevronDown />;
-      case 2:
-        return <IconChevronsDown />;
-      default:
-        return <IconClock />;
-    }
-  };
-
-  const getChev = (type: utype, val: number, key: number) => {
-    const col =
-      type === "attacker" ? "blue" : type === "defenders" ? "red" : "green";
-    return (
-      <Button
-        bg={col}
-        key={key}
-        size="compact-sm"
-        onClick={() => removeToken(type, key)}
-      >
-        {getIcon(val)}
-      </Button>
-    );
   };
 
   const addReinforcements = () => {
@@ -212,7 +187,7 @@ function App() {
         if (iix > -1) {
           bagPool.splice(iix, 1);
         }
-        if (iiix) {
+        if (iiix > -1) {
           bagPool.splice(iiix, 1);
         }
 
@@ -420,101 +395,18 @@ function App() {
         </Card>
       )}
       {page === pageEnum.Start && (
-        <Card shadow="xl" padding="md" withBorder>
-          <Text fw={700} td="underline">
-            Prepare units
-          </Text>
-          <Card.Section>
-            <Text c="red">Defenders</Text>
-            <Group
-              m="0"
-              gap={1}
-              mih={60}
-              align="center"
-              w="100%"
-              justify="center"
-            >
-              {defenders.map((v, k) => {
-                return getChev("defenders", v, k);
-              })}
-            </Group>
-          </Card.Section>
-          <Card.Section>
-            <Text c="blue">Attackers</Text>
-            <Group
-              m="0"
-              gap={1}
-              mih={60}
-              align="center"
-              w="100%"
-              justify="center"
-            >
-              {attackers.map((v, k) => {
-                return getChev("attacker", v, k);
-              })}
-            </Group>
-          </Card.Section>
-          <Card.Section>
-            <Text c="teal">Reinforcements</Text>
-            <Group
-              m="0"
-              gap={1}
-              mih={60}
-              align="center"
-              w="100%"
-              justify="center"
-            >
-              {reinforcements.map((v, k) => {
-                return getChev("reinforcement", v, k);
-              })}
-            </Group>
-          </Card.Section>
-          <Card.Section>
-            <Text c="white">Utilities</Text>
-            <Group align="center" m={10} justify="center">
-              <IconClock />
-              <IconClock />
-              <IconClock />
-            </Group>
-          </Card.Section>
-          <Card.Section m="sm">
-            <Button size="xl" fullWidth onClick={() => startGame()}>
-              Start
-            </Button>
-          </Card.Section>
-          <Group align="center" m={2} justify="center">
-            <Button bg="red" size="md" onClick={() => addToken("defenders", 1)}>
-              <IconChevronDown size={40} />
-            </Button>
-            <Button bg="red" size="md" onClick={() => addToken("defenders", 2)}>
-              <IconChevronsDown size={40} />
-            </Button>
-          </Group>
-          <Group align="center" m={2} justify="center">
-            <Button bg="blue" size="md" onClick={() => addToken("attacker", 1)}>
-              <IconChevronDown size={40} />
-            </Button>
-            <Button bg="blue" size="md" onClick={() => addToken("attacker", 2)}>
-              <IconChevronsDown size={40} />
-            </Button>
-          </Group>
-          <Group align="center" m={2} justify="center">
-            <Button
-              bg="green"
-              size="md"
-              onClick={() => addToken("reinforcement", 1)}
-            >
-              <IconChevronDown size={40} />
-            </Button>
-            <Button
-              bg="green"
-              size="md"
-              onClick={() => addToken("reinforcement", 2)}
-            >
-              <IconChevronsDown size={40} />
-            </Button>
-          </Group>
-        </Card>
+        <StartPage
+          bags={{
+            attackers: attackers,
+            defenders: defenders,
+            reinforcements: reinforcements,
+          }}
+          actions={{
+            addToken: addToken,
+            removeToken: removeToken,
+            startGame: startGame,
+          }}
+        />
       )}
     </>
   );
