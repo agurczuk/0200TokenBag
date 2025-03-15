@@ -18,26 +18,98 @@ enum pageEnum {
   EndGame,
 }
 
+interface GameState {
+  attackers: number[]; // Replace `any` with a specific type if possible
+  defenders: number[];
+  reinforcements: number[];
+  bag: number[];
+  bagPool: number[];
+  drawn: number[];
+  page: pageEnum;
+  token: number | undefined;
+  timeTokens: number;
+  nextTurnReady: boolean;
+  turnNo: number;
+  reinfAdded: boolean;
+}
+
 const random = (l: number) => {
   return Math.floor(Math.random() * l);
 };
 
+//on load
+//console.log("load state");
+const savedState = localStorage.getItem("startstate");
+//console.log(savedState);
+const startState: GameState | undefined = savedState
+  ? JSON.parse(savedState)
+  : undefined;
+
 function App() {
-  const [defenders, setDefenders] = useState<number[]>([]);
-  const [attackers, setAttackers] = useState<number[]>([]);
-  const [reinforcements, setReinforcements] = useState<number[]>([]);
-  const [bag, setBag] = useState<number[]>([]);
-  const [bagPool, setBagPool] = useState<number[]>([]);
-  const [drawn, setDrawn] = useState<number[]>([]);
+  const [defenders, setDefenders] = useState<number[]>(
+    startState?.defenders ?? []
+  );
+  const [attackers, setAttackers] = useState<number[]>(
+    startState?.attackers ?? []
+  );
+  const [reinforcements, setReinforcements] = useState<number[]>(
+    startState?.reinforcements ?? []
+  );
+  const [bag, setBag] = useState<number[]>(startState?.bag ?? []);
+  const [bagPool, setBagPool] = useState<number[]>(startState?.bagPool ?? []);
+  const [drawn, setDrawn] = useState<number[]>(startState?.drawn ?? []);
 
-  const [page, setPage] = useState<pageEnum>(pageEnum.Start);
+  const [page, setPage] = useState<pageEnum>(
+    startState?.page ?? pageEnum.Start
+  );
 
-  const [token, setToken] = useState<number>();
-  const [timeTokens, setTimeTokens] = useState<number>(0);
-  const [nextTurnReady, setNextTurnReady] = useState<boolean>(false);
-  const [turnNo, setTurnNo] = useState<number>(0);
+  const [token, setToken] = useState<number | undefined>(
+    startState?.token ?? undefined
+  );
+  const [timeTokens, setTimeTokens] = useState<number>(
+    startState?.timeTokens ?? 0
+  );
+  const [nextTurnReady, setNextTurnReady] = useState<boolean>(
+    startState?.nextTurnReady ?? false
+  );
+  const [turnNo, setTurnNo] = useState<number>(startState?.turnNo ?? 0);
 
-  const [reinfAdded, setReinfAdded] = useState<boolean>(false);
+  const [reinfAdded, setReinfAdded] = useState<boolean>(
+    startState?.reinfAdded ?? false
+  );
+
+  //localstorage
+  useEffect(() => {
+    console.log("save state");
+    const saveblob: GameState = {
+      attackers: attackers,
+      defenders: defenders,
+      reinforcements: reinforcements,
+      bag: bag,
+      bagPool: bagPool,
+      drawn: drawn,
+      page: page,
+      token: token,
+      timeTokens: timeTokens,
+      nextTurnReady: nextTurnReady,
+      reinfAdded: reinfAdded,
+      turnNo: turnNo,
+    };
+    localStorage.setItem("startstate", JSON.stringify(saveblob));
+  }, [
+    attackers,
+    defenders,
+    reinforcements,
+    bag,
+    bagPool,
+    drawn,
+    page,
+    token,
+    timeTokens,
+    nextTurnReady,
+    reinfAdded,
+    turnNo,
+  ]);
 
   const startGame = () => {
     setBag([...attackers, ...defenders, 3, 3, 3]);
@@ -182,11 +254,12 @@ function App() {
         break;
       case 2:
         let iix = bagPool.indexOf(2);
-        let iiix = bagPool.indexOf(2, iix + 1);
 
         if (iix > -1) {
           bagPool.splice(iix, 1);
         }
+        
+        let iiix = bagPool.indexOf(2, iix);
         if (iiix > -1) {
           bagPool.splice(iiix, 1);
         }
