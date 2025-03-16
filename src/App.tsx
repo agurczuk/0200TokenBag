@@ -72,6 +72,8 @@ function App() {
     startState?.reinfAdded ?? false
   );
 
+  const [drawEnabled, setDrawEnabled] = useState<boolean>(true);
+
   //localstorage
   useEffect(() => {
     const saveblob: GameState = {
@@ -147,6 +149,11 @@ function App() {
     setDrawn([...drawn, bag[ix]]);
     bag.splice(ix, 1);
     setBag([...bag]);
+
+    setDrawEnabled(false);
+    setTimeout(() => {
+      setDrawEnabled(true);
+    }, 1000);
   };
 
   const nextTurn = () => {
@@ -308,7 +315,13 @@ function App() {
           </Group>
           <Card.Section m={10}>
             {!nextTurnReady && (
-              <Button fullWidth h={100} size="xl" onClick={() => drawToken()}>
+              <Button
+                disabled={!drawEnabled}
+                fullWidth
+                h={100}
+                size="xl"
+                onClick={() => drawToken()}
+              >
                 Draw
               </Button>
             )}
@@ -320,6 +333,8 @@ function App() {
           </Card.Section>
           <Group justify="center">
             <Button
+              w="45%"
+              size="xl"
               onClick={() => {
                 setPage(pageEnum.Options);
               }}
@@ -327,6 +342,8 @@ function App() {
               Options
             </Button>
             <Button
+              size="xl"
+              w="45%"
               onClick={() => {
                 setPage(pageEnum.EndGame);
               }}
